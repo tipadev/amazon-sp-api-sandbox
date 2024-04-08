@@ -18,7 +18,7 @@ class ApiService implements ApiServiceInterface
 
     protected function checkAccessToken(): void
     {
-        $dateNow = new DateTime('now');
+        $dateNow = new DateTime('now', new DateTimeZone('UTC'));
 
         if (is_null($this->accessToken) || $this->tokenExpirationDate < $dateNow->getTimestamp()) {
             $requestUrl = $this->config['api_auth_url'];
@@ -40,11 +40,13 @@ class ApiService implements ApiServiceInterface
                 throw new Exception('Unable to get the access token');
             }
 
-            $tokenExpirationDate = new DateTime('now', new DateTimeZone('UTC'));
-            $tokenExpirationDate->add(new DateInterval('PT' . $result['expires_in'] . 'S'));
+            $tokenExpirationDate = new DateTime(
+                'now +' . $result['expires_in'] . ' seconds', 
+                new DateTimeZone('UTC')
+            );
 
             $this->accessToken = $result['access_token'];
-            $this->tokenExpirationDate = $tokenExpirationDate;
+            $this->tokenExpirationDate = $tokenExpirationDate->getTimestamp();
         }
     }
 
