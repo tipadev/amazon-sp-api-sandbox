@@ -82,6 +82,6 @@ class ApiService implements ApiServiceInterface
             'x-amz-access-token: ' . $this->accessToken,
         ];
 
-        $result = $this->request->get($requestUrl, $requestHeaders);
+        return $this->request->get($requestUrl, $requestHeaders);
     }
 }
